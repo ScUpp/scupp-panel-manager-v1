@@ -1,0 +1,17 @@
+.navbar {
+    margin-bottom: 20px;
+  }
+  
+  .navbar-brand {
+    font-weight: bold;
+  }
+  
+  .nav-link {
+    margin-right: 15px;
+    font-size: 1.1rem;
+  }
+  
+  .nav-link:hover {
+    text-decoration: underline;
+  }
+  
