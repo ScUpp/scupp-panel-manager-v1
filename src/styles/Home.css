@@ -1,0 +1,36 @@
+.stat-card-0 .card {
+    background-color: #ff6f61; /* Cor para o primeiro quadrado */
+    color: white;
+  }
+  
+  .stat-card-1 .card {
+    background-color: #28a745; /* Cor para o segundo quadrado */
+    color: white;
+  }
+  
+  .stat-card-2 .card {
+    background-color: #ffc107; /* Cor para o terceiro quadrado */
+    color: white;
+  }
+  
+  .stat-card-3 .card {
+    background-color: #17a2b8; /* Cor para o quarto quadrado */
+    color: white;
+  }
+  
+  /* Outros estilos gerais */
+  .card-title {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  .card-text {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .btn {
+    font-size: 1rem;
+    padding: 8px 16px;
+  }
+  

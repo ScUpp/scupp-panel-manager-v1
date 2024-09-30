@@ -60,7 +60,6 @@ const CreateEvent = () => {
     }
   };
 
-  // Função para submeter o evento
   const handleSubmitEvent = async (e) => {
     e.preventDefault();
 
@@ -82,10 +81,10 @@ const CreateEvent = () => {
         lng: address.lng,
       },
       duration: {
-        startAt: "2024-09-29T23:54:12.837Z", // Valores temporários
+        startAt: "2024-09-29T23:54:12.837Z",
         endAt: "2024-09-29T23:54:12.837Z",
       },
-      categories: [{ id: 1 }], // Placeholder para categorias
+      categories: [{ id: 1 }],
       company: {
         id: null,
         name: "Company Name",

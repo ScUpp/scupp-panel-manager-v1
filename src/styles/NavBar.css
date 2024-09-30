@@ -1,17 +1,43 @@
-.navbar {
-    margin-bottom: 20px;
-  }
-  
-  .navbar-brand {
-    font-weight: bold;
-  }
-  
-  .nav-link {
-    margin-right: 15px;
-    font-size: 1.1rem;
-  }
-  
-  .nav-link:hover {
-    text-decoration: underline;
-  }
-  
+.navbar-vertical {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100%;
+  background-color: #f8f9fa;
+  padding-top: 20px;
+}
+
+.navbar-vertical .navbar-nav {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.navbar-vertical .nav-item {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.navbar-vertical .nav-link {
+  color: #333;
+  padding: 10px 15px;
+  text-decoration: none;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-vertical .nav-link:hover {
+  background-color: #e9ecef;
+  border-radius: 4px;
+}
+
+.navbar-vertical .nav-link i {
+  margin-right: 10px;
+}
+
+.navbar-vertical .nav-item .active {
+  background-color: #e9ecef;
+  font-weight: bold;
+}

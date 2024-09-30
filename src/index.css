@@ -1,1 +1,50 @@
-/* Arquivo de estilos globais vazio */
+/* Importando a fonte do Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;700&display=swap');
+
+/* Aplicando a fonte globalmente */
+body {
+    font-family: 'Raleway', sans-serif; /* Alterado para Raleway */
+    color: #212529; /* Cor de texto padrão */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Estilo para o conteúdo principal */
+.main-content {
+    margin-left: 250px; /* Para acomodar a largura da NavBar */
+    padding: 20px;
+    padding-top: 60px; /* Adicionando padding para evitar sobreposição do cabeçalho */
+}
+
+/* Estilo para os cards */
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo dos títulos dos cards */
+.card-title {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* Estilo do texto dentro dos cards */
+.card-text {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+/* Estilo para os botões */
+.btn {
+    font-size: 1rem;
+    padding: 8px 16px;
+    border-radius: 4px;
+}
+
+/* Link sem sublinhado */
+a {
+    text-decoration: none;
+    color: inherit;
+}
