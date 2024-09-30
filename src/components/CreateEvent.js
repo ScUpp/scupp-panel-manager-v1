@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { BlobServiceClient } from "@azure/storage-blob"; // Importar o BlobServiceClient
+import { v4 as uuidv4 } from "uuid"; // Importar UUID
 
 const CreateEvent = () => {
   const [eventName, setEventName] = useState("");
   const [locationName, setLocationName] = useState("");
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [imageFile, setImageFile] = useState(null); // Armazena o arquivo da imagem
+  const [uploading, setUploading] = useState(false); // Estado para controlar o upload
   const [address, setAddress] = useState({
     postalCode: "",
     street: "",
@@ -60,14 +64,54 @@ const CreateEvent = () => {
     }
   };
 
+  // Função para realizar upload da imagem para o Azure Storage
+  const handleImageUpload = async () => {
+    if (!imageFile) return;
+
+    setUploading(true); // Definindo o estado de upload
+
+    const sasToken = "sv=2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2024-11-01T00:55:33Z&st=2024-09-30T16:55:33Z&spr=https,http&sig=b00rR9CRQgzbl2JM%2FCCF0QBIMM%2B7bzjl3CekUT3abpw%3D";
+    const blobServiceClient = new BlobServiceClient(
+      `https://scuppmedi4.blob.core.windows.net?${sasToken}`
+    );
+    const containerClient = blobServiceClient.getContainerClient("scupp-media");
+
+    const blobName = `${uuidv4()}-event-img.png`;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+    try {
+      const uploadBlobResponse = await blockBlobClient.uploadBrowserData(imageFile);
+      console.log(`Imagem carregada com sucesso. ID da transação: ${uploadBlobResponse.requestId}`);
+
+      // Definir a URL pública da imagem no Azure Blob Storage
+      setImageUrl(`https://scuppmedi4.blob.core.windows.net/scupp-media/${blobName}`);
+    } catch (error) {
+      console.error("Erro ao fazer upload da imagem:", error);
+    } finally {
+      setUploading(false); // Upload concluído
+    }
+  };
+
+  // Função para remover a imagem carregada
+  const handleRemoveImage = () => {
+    setImageUrl("");
+    setImageFile(null);
+  };
+
+  // Função para submeter o evento
   const handleSubmitEvent = async (e) => {
     e.preventDefault();
+
+    if (!imageUrl) {
+      alert("Por favor, envie uma imagem primeiro.");
+      return;
+    }
 
     const eventData = {
       name: eventName,
       locationName: selectedLocation ? selectedLocation.name : locationName,
       description: description,
-      imageUrl: imageUrl,
+      imageUrl: imageUrl, // A URL da imagem é incluída aqui
       address: {
         postalCode: address.postalCode,
         street: address.street,
@@ -178,20 +222,53 @@ const CreateEvent = () => {
           ></textarea>
         </div>
 
+        {/* Campo de Upload de Imagem */}
         <div className="form-group mt-3">
-          <label>URL da Imagem</label>
-          <input
-            type="text"
-            className="form-control"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            required
-          />
+          <label>Upload da Imagem</label>
+          {imageUrl ? (
+            <div className="mt-2">
+              <div className="position-relative">
+                <img
+                  src={imageUrl}
+                  alt="Imagem do Evento"
+                  style={{ width: "100%", maxHeight: "300px", objectFit: "contain" }}
+                />
+                <button
+                  type="button"
+                  className="btn btn-danger position-absolute top-0 end-0"
+                  onClick={handleRemoveImage}
+                  style={{ fontSize: "1.2rem", lineHeight: "1rem" }}
+                >
+                  &times;
+                </button>
+              </div>
+            </div>
+          ) : (
+            <input
+              type="file"
+              className="form-control"
+              accept="image/*"
+              onChange={(e) => setImageFile(e.target.files[0])}
+            />
+          )}
         </div>
 
-        <button type="submit" className="btn btn-success mt-4">
-          Criar Evento
-        </button>
+        <div className="d-flex justify-content-start mt-4">
+          <button
+            type="button"
+            className="btn btn-primary me-2"
+            onClick={handleImageUpload}
+            disabled={!imageFile || uploading}
+          >
+            {uploading ? "Enviando..." : "Enviar Imagem"}
+          </button>
+        </div>
+
+        <div className="d-flex justify-content-end mt-4">
+          <button type="submit" className="btn btn-success" disabled={uploading || !imageUrl}>
+            Criar Evento
+          </button>
+        </div>
       </form>
     </div>
   );
