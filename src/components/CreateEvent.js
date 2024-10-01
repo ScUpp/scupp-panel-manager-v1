@@ -26,7 +26,10 @@ const CreateEvent = () => {
   const [cep, setCep] = useState("");
   const [confirmAddress, setConfirmAddress] = useState(false);
   const [addressConfirmed, setAddressConfirmed] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(""); // Estado para armazenar a mensagem de sucesso
+  const [successMessage, setSuccessMessage] = useState("");
+  const [categories, setCategories] = useState([]); // Estado para armazenar as categorias
+  const [selectedCategories, setSelectedCategories] = useState([]); // Categorias selecionadas pelo usuário
+  const [showCategoryModal, setShowCategoryModal] = useState(false); // Controle do modal de categorias
   const accessToken = localStorage.getItem("accessToken");
 
   // Limpa os resultados anteriores quando o nome do local é alterado
@@ -126,6 +129,33 @@ const CreateEvent = () => {
     setImageFile(null);
   };
 
+  // Função para abrir o modal e buscar as categorias
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/scupp/api/v1/admin/events/categories", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      setCategories(data); // Armazenar as categorias
+      setShowCategoryModal(true); // Mostrar o modal de categorias
+    } catch (error) {
+      console.error("Erro ao buscar categorias:", error);
+    }
+  };
+
+  // Função para selecionar/deselecionar categorias
+  const handleCategorySelect = (categoryId) => {
+    if (selectedCategories.includes(categoryId)) {
+      setSelectedCategories(selectedCategories.filter((id) => id !== categoryId));
+    } else {
+      setSelectedCategories([...selectedCategories, categoryId]);
+    }
+  };
+
   // Função para submeter o evento
   const handleSubmitEvent = async (e) => {
     e.preventDefault();
@@ -140,7 +170,6 @@ const CreateEvent = () => {
       }
     }
 
-    console.log(address)
     const eventData = {
       name: eventName,
       locationName: selectedLocation ? selectedLocation.name : locationName,
@@ -163,11 +192,11 @@ const CreateEvent = () => {
         startAt: "2024-09-29T23:54:12.837Z",
         endAt: "2024-09-29T23:54:12.837Z",
       },
-      categories: [{ id: 1 }],
+      categories: selectedCategories.map((id) => ({ id })), // Adicionando categorias selecionadas
       company: {
         id: null,
-        name: "Company Name",
-        email: "company@example.com",
+        name: "SCUPP",
+        email: "scuppoficial@gmail.com",
         cellNumber: "123456789",
       },
     };
@@ -252,6 +281,53 @@ const CreateEvent = () => {
             Buscar Local do Evento
           </button>
         </div>
+
+        {/* Botão para selecionar categorias */}
+        <div className="form-group mt-3">
+          <button type="button" className="btn btn-secondary" onClick={fetchCategories}>
+            Selecionar Categorias
+          </button>
+        </div>
+
+        {/* Modal de categorias */}
+        {showCategoryModal && (
+          <div className="modal show" style={{ display: "block" }}>
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Selecione as Categorias</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setShowCategoryModal(false)}
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  {categories.map((category) => (
+                    <div key={category.id}>
+                      <input
+                        type="checkbox"
+                        value={category.id}
+                        checked={selectedCategories.includes(category.id)}
+                        onChange={() => handleCategorySelect(category.id)}
+                      />{" "}
+                      {category.name}
+                    </div>
+                  ))}
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => setShowCategoryModal(false)}
+                  >
+                    Fechar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {showCepInput && !confirmAddress && (
           <div className="form-group mt-3">

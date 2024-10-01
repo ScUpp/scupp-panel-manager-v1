@@ -1,39 +1,37 @@
 .login-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #f2f2f2;
-  }
-  
-  .login-title {
-    margin-bottom: 1rem;
-    color: #333333;
-  }
-  
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    width: 300px;
-  }
-  
-  .form-group {
-    margin-bottom: 1rem;
-  }
-  
-  .login-button-container {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .btn-primary {
-    background-color: #4285f4;
-    border-color: #4285f4;
-  }
-  
-  .btn-success {
-    background-color: #28a745;
-    border-color: #28a745;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.login-title {
+  margin-bottom: 1rem;
+  color: #333333;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.login-button-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn-primary {
+  background-color: #4285f4;
+  border-color: #4285f4;
+}
+
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+}
