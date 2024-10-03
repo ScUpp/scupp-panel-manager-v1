@@ -10,6 +10,8 @@ const CreateEvent = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [startAt, setStartAt] = useState("");
+  const [endAt, setEndAt] = useState("");
   const [address, setAddress] = useState({
     postalCode: "",
     street: "",
@@ -27,12 +29,11 @@ const CreateEvent = () => {
   const [confirmAddress, setConfirmAddress] = useState(false);
   const [addressConfirmed, setAddressConfirmed] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-  const [categories, setCategories] = useState([]); // Estado para armazenar as categorias
-  const [selectedCategories, setSelectedCategories] = useState([]); // Categorias selecionadas pelo usuário
-  const [showCategoryModal, setShowCategoryModal] = useState(false); // Controle do modal de categorias
+  const [categories, setCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
   const accessToken = localStorage.getItem("accessToken");
 
-  // Limpa os resultados anteriores quando o nome do local é alterado
   useEffect(() => {
     setLocations([]);
     setSelectedLocation(null);
@@ -41,7 +42,6 @@ const CreateEvent = () => {
     setAddressConfirmed(false);
   }, [locationName]);
 
-  // Função para buscar a lista de localidades com base no nome do local
   const searchLocations = async () => {
     try {
       const response = await fetch(
@@ -57,7 +57,7 @@ const CreateEvent = () => {
       const data = await response.json();
       if (data.length === 0) {
         setShowCepInput(true);
-        setLocations([]); // Limpa as localidades anteriores
+        setLocations([]);
       } else {
         setLocations(data);
         setShowCepInput(false);
@@ -67,7 +67,6 @@ const CreateEvent = () => {
     }
   };
 
-  // Função para buscar o endereço com base no CEP
   const searchAddressByCep = async () => {
     if (!cep) return;
     try {
@@ -94,10 +93,8 @@ const CreateEvent = () => {
     }
   };
 
-  // Função para realizar o upload da imagem para o Azure Storage
   const uploadImageToAzure = async () => {
     if (!imageFile) return null;
-
     setUploading(true);
     const sasToken =
       "sv=2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2024-11-01T00:55:33Z&st=2024-09-30T16:55:33Z&spr=https,http&sig=b00rR9CRQgzbl2JM%2FCCF0QBIMM%2B7bzjl3CekUT3abpw%3D";
@@ -112,8 +109,6 @@ const CreateEvent = () => {
     try {
       const uploadBlobResponse = await blockBlobClient.uploadBrowserData(imageFile);
       console.log(`Imagem carregada com sucesso. ID da transação: ${uploadBlobResponse.requestId}`);
-
-      // Retornar a URL pública da imagem no Azure Blob Storage
       return `https://scuppmedi4.blob.core.windows.net/scupp-media/${blobName}`;
     } catch (error) {
       console.error("Erro ao fazer upload da imagem:", error);
@@ -123,13 +118,11 @@ const CreateEvent = () => {
     }
   };
 
-  // Função para remover a imagem carregada
   const handleRemoveImage = () => {
     setImageUrl("");
     setImageFile(null);
   };
 
-  // Função para abrir o modal e buscar as categorias
   const fetchCategories = async () => {
     try {
       const response = await fetch("http://localhost:8080/scupp/api/v1/admin/events/categories", {
@@ -140,14 +133,13 @@ const CreateEvent = () => {
         },
       });
       const data = await response.json();
-      setCategories(data); // Armazenar as categorias
-      setShowCategoryModal(true); // Mostrar o modal de categorias
+      setCategories(data);
+      setShowCategoryModal(true);
     } catch (error) {
       console.error("Erro ao buscar categorias:", error);
     }
   };
 
-  // Função para selecionar/deselecionar categorias
   const handleCategorySelect = (categoryId) => {
     if (selectedCategories.includes(categoryId)) {
       setSelectedCategories(selectedCategories.filter((id) => id !== categoryId));
@@ -156,11 +148,9 @@ const CreateEvent = () => {
     }
   };
 
-  // Função para submeter o evento
   const handleSubmitEvent = async (e) => {
     e.preventDefault();
 
-    // Verifica se o usuário adicionou uma imagem, se sim, faz o upload
     let uploadedImageUrl = imageUrl;
     if (imageFile) {
       uploadedImageUrl = await uploadImageToAzure();
@@ -189,10 +179,10 @@ const CreateEvent = () => {
         lng: address.lng,
       },
       duration: {
-        startAt: "2024-09-29T23:54:12.837Z",
-        endAt: "2024-09-29T23:54:12.837Z",
+        startAt: startAt, // Novo campo preenchido pelo usuário
+        endAt: endAt, // Novo campo preenchido pelo usuário
       },
-      categories: selectedCategories.map((id) => ({ id })), // Adicionando categorias selecionadas
+      categories: selectedCategories.map((id) => ({ id })),
       company: {
         id: null,
         name: "SCUPP",
@@ -222,7 +212,6 @@ const CreateEvent = () => {
     }
   };
 
-  // Função para selecionar uma localização e preencher os campos de endereço
   const handleSelectLocation = (index) => {
     if (index < 0) {
       setSelectedLocation(null);
@@ -231,6 +220,7 @@ const CreateEvent = () => {
     const location = locations[index];
     if (location) {
       setSelectedLocation(location);
+      setLocationName(location.name); 
       setAddress({
         id: location.id || "",
         postalCode: location.postalCode || "",
@@ -242,7 +232,7 @@ const CreateEvent = () => {
         lat: location.lat || 0,
         lng: location.lng || 0,
       });
-      setAddressConfirmed(true); // Confirma o endereço
+      setAddressConfirmed(true); 
     } else {
       setSelectedLocation(null);
     }
@@ -282,14 +272,58 @@ const CreateEvent = () => {
           </button>
         </div>
 
-        {/* Botão para selecionar categorias */}
+
+        
+        {locations.length > 0 && !addressConfirmed && (
+          <div className="form-group mt-3">
+            <label>Selecione o Endereço</label>
+            <select
+              className="form-control"
+              onChange={(e) => handleSelectLocation(e.target.selectedIndex - 1)}
+            >
+              <option value="">
+                Selecione o endereço adequado para o local do evento mencionado:
+              </option>
+              {locations.map((location, index) => (
+                <option key={index} value={location.name}>
+                  {location.name} - {location.street}, {location.neighborhood}, {location.city} - {location.state}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+
+        {/* Novo campo para StartAt */}
+        <div className="form-group mt-3">
+          <label>Data e Hora de Início</label>
+          <input
+            type="datetime-local"
+            className="form-control"
+            value={startAt}
+            onChange={(e) => setStartAt(e.target.value)}
+            required
+          />
+        </div>
+
+        {/* Novo campo para EndAt */}
+        <div className="form-group mt-3">
+          <label>Data e Hora de Término</label>
+          <input
+            type="datetime-local"
+            className="form-control"
+            value={endAt}
+            onChange={(e) => setEndAt(e.target.value)}
+            required
+          />
+        </div>
+
         <div className="form-group mt-3">
           <button type="button" className="btn btn-secondary" onClick={fetchCategories}>
             Selecionar Categorias
           </button>
         </div>
 
-        {/* Modal de categorias */}
         {showCategoryModal && (
           <div className="modal show" style={{ display: "block" }}>
             <div className="modal-dialog">
@@ -372,25 +406,6 @@ const CreateEvent = () => {
                 Voltar para CEP
               </button>
             </div>
-          </div>
-        )}
-
-        {locations.length > 0 && !confirmAddress && !addressConfirmed && (
-          <div className="form-group mt-3">
-            <label>Selecione o Endereço</label>
-            <select
-              className="form-control"
-              onChange={(e) => handleSelectLocation(e.target.selectedIndex - 1)}
-            >
-              <option value="">
-                Selecione o endereço adequado para o local do evento mencionado:
-              </option>
-              {locations.map((location, index) => (
-                <option key={index} value={location.name}>
-                  {location.name} - {location.city}, {location.state}
-                </option>
-              ))}
-            </select>
           </div>
         )}
 
