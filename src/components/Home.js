@@ -13,6 +13,7 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { FaSyncAlt } from "react-icons/fa"; // Ícone de refresh
+import { useNavigate } from "react-router-dom"; // Use useNavigate em vez de useHistory
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -20,8 +21,8 @@ const Home = () => {
   const [statCards, setStatCards] = useState([]);
   const [graphData, setGraphData] = useState(null);
   const accessToken = localStorage.getItem("accessToken");
+  const navigate = useNavigate(); // Use useNavigate
 
-  
   const fetchData = async () => {
     try {
       const response = await fetch("http://localhost:8080/scupp/api/v1/admin/events/home", {
@@ -38,6 +39,13 @@ const Home = () => {
     } catch (error) {
       console.error("Erro ao buscar os dados:", error);
     }
+  };
+
+  const handleShowEvents = (status) => {
+    if (status === "CREATED") return; // Não faz nada para o status "CREATED"
+
+    // Navega para a página de eventos com o status selecionado
+    navigate(`/events/status/${status}`);
   };
 
   useEffect(() => {
@@ -75,7 +83,14 @@ const Home = () => {
               <div className="card-body">
                 <h5 className="card-title">{card.value}</h5>
                 <p className="card-text">{card.title}</p>
-                <button className="btn btn-light">{card.buttonLabel}</button>
+                {card.status !== "CREATED" && (
+                  <button
+                    className="btn btn-light"
+                    onClick={() => handleShowEvents(card.status)}
+                  >
+                    {card.buttonLabel}
+                  </button>
+                )}
               </div>
             </div>
           </div>
