@@ -66,6 +66,7 @@ const Home = () => {
   };
 
   return (
+    <div className="main-content">
     <div className="container mt-5">
       {/* Botão de refresh */}
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -103,6 +104,7 @@ const Home = () => {
           {graphData ? <Line data={chartData} /> : <p>Carregando gráfico...</p>}
         </div>
       </div>
+    </div>
     </div>
   );
 };

@@ -42,6 +42,7 @@ const EventDetails = () => {
   };
 
   return (
+    <div className="main-content">
     <div className="container mt-5">
       <h2>Detalhes do Evento</h2>
       <div className="card">
@@ -64,6 +65,7 @@ const EventDetails = () => {
           </p>
         </div>
       </div>
+    </div>
     </div>
   );
 };

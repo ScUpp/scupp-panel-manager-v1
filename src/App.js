@@ -17,7 +17,6 @@ function App() {
       {location.pathname !== "/" && <Header />}
       {location.pathname !== "/" && <NavBar />}
 
-      <div className="main-content">
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/home" element={<Home />} />
@@ -29,7 +28,6 @@ function App() {
           <Route path="/events/:id" element={<EventDetails />} />
           <Route path="/edit-event/:id" element={<EditEvent />} /> {/* Rota para edição */}
         </Routes>
-      </div>
     </>
   );
 }

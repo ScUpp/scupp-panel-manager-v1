@@ -239,6 +239,7 @@ const CreateEvent = () => {
   };
 
   return (
+    <div className="main-content">
     <div className="container mt-5">
       <h2 className="mb-4">Criar Evento</h2>
       {successMessage && (
@@ -491,6 +492,7 @@ const CreateEvent = () => {
           </button>
         </div>
       </form>
+    </div>
     </div>
   );
 };

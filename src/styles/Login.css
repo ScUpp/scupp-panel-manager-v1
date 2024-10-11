@@ -15,6 +15,9 @@
   display: flex;
   flex-direction: column;
   width: 300px;
+  margin-left: 0px; /* Para acomodar a largura da NavBar */
+  padding: 0px;
+  padding-top: 0px; 
 }
 
 .form-group {

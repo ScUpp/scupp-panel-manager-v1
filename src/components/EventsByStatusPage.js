@@ -52,6 +52,7 @@ const EventsByStatusPage = () => {
   };
 
   return (
+    <div className="main-content">
     <div className="container mt-5">
       <h2>Eventos - Status: {status}</h2>
 
@@ -96,6 +97,7 @@ const EventsByStatusPage = () => {
           Próxima Página
         </button>
       </div>
+    </div>
     </div>
   );
 };
